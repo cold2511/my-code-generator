@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -8,14 +8,18 @@ def home():
 
 @app.route('/api/generate-code', methods=['POST'])
 def generate_code():
-    problem = request.json.get('problem')
-    if not problem:
-        return jsonify({'error': 'No problem provided'}), 400
-    
-    # Implement your code generation logic here
-    generated_code = f"# Code for the problem: {problem}"
-    
-    return jsonify({'code': generated_code})
+    try:
+        data = request.get_json()
+        problem = data.get('problem')
+        if not problem:
+            return jsonify({'error': 'No problem provided'}), 400
+
+        # Placeholder code generation logic
+        generated_code = f"# Code for the problem: {problem}"
+
+        return jsonify({'code': generated_code})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
