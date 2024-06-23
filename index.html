@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Generator</title>
+</head>
+<body>
+    <h1>Code Generator</h1>
+    <form id="problemForm">
+        <label for="problem">Enter your problem:</label><br>
+        <textarea id="problem" name="problem" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Generate Code">
+    </form>
+    <h2>Generated Code:</h2>
+    <pre id="generatedCode"></pre>
+
+    <script>
+        document.getElementById('problemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const problem = document.getElementById('problem').value;
+            
+            fetch('/api/generate-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ problem })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('generatedCode').textContent = data.code;
+            });
+        });
+    </script>
+</body>
+</html>
