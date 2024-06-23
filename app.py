@@ -1,37 +1,29 @@
-from flask import Flask, jsonify, request
-import logging
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
-
-@app.route('/')
-def home():
-    return "Welcome to the Code Generator!"
 
 @app.route('/api/generate-code', methods=['POST'])
 def generate_code():
     try:
         data = request.get_json()
-        app.logger.debug(f'Received data: {data}')
+        if not data or 'problem' not in data:
+            return jsonify({"error": "Request does not contain a valid JSON payload"}), 400
         
-        if data is None:
-            return jsonify({'error': 'Request does not contain a valid JSON payload'}), 400
+        problem = data['problem']
+        # Example logic to generate code based on the problem description
+        if "add two numbers" in problem.lower():
+            generated_code = """
+def add_two_numbers(a, b):
+    return a + b
 
-        problem = data.get('problem')
-        app.logger.debug(f'Problem: {problem}')
+print(add_two_numbers(2, 3))
+"""
+        else:
+            generated_code = "# Code for the problem: " + problem
 
-        if not problem:
-            return jsonify({'error': 'No problem provided'}), 400
-
-        # Placeholder code generation logic
-        generated_code = f"# Code for the problem: {problem}"
-
-        return jsonify({'code': generated_code})
+        return jsonify({"code": generated_code})
     except Exception as e:
-        app.logger.error(f'Error: {str(e)}', exc_info=True)
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
